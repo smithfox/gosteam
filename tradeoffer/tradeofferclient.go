@@ -18,16 +18,19 @@ import (
 const apiUrl = "http://api.steampowered.com/IEconService/%s/v%d"
 
 type TradeOfferClient struct {
-	client *http.Client
-	b      *bot.BotRunTime
+	httpClient *http.Client
+	b          *bot.BotRunTime
 }
 
 func NewTradeOfferClient(b *bot.BotRunTime) *TradeOfferClient {
 	c := &TradeOfferClient{
-		client: new(http.Client),
-		b:      b,
+		httpClient: new(http.Client),
+		b:          b,
 	}
-	community.SetCookiesHttps(c.client, b.WebSessionId(), b.WebSteamLogin(), b.WebSteamLoginSecure())
+
+	community.SetCookies(c.httpClient, b.WebSessionId(), b.WebSteamLogin())
+
+	community.SetCookiesHttps(c.httpClient, b.WebSessionId(), b.WebSteamLogin(), b.WebSteamLoginSecure())
 	return c
 }
 
@@ -40,9 +43,9 @@ func (c *TradeOfferClient) SendOffer(partner SteamId, offer_url_token string, me
 	uuuu, _ := url.Parse("https://steamcommunity.com/")
 	send_url := "https://steamcommunity.com/tradeoffer/new/send"
 	refer_url := fmt.Sprintf("https://steamcommunity.com/tradeoffer/new/?partner=%d&token=%s", partner.GetAccountId(), offer_url_token)
-	c.b.Debugf("refer_url=%s,cookie=%v\n", refer_url, c.client.Jar.Cookies(uuuu))
-	//fmt.Printf("refer_url=%s,cookie=%v\n", refer_url, c.client.Jar.Cookies(uuuu))
-	resp, err := c.client.Do(netutil.NewPostForm1(send_url, refer_url, netutil.ToUrlValues(map[string]string{
+	c.b.Debugf("refer_url=%s,cookie=%v\n", refer_url, c.httpClient.Jar.Cookies(uuuu))
+	//fmt.Printf("refer_url=%s,cookie=%v\n", refer_url, c.httpClient.Jar.Cookies(uuuu))
+	resp, err := c.httpClient.Do(netutil.NewPostForm1(send_url, refer_url, netutil.ToUrlValues(map[string]string{
 		"sessionid":                 c.b.WebSessionId(),
 		"serverid":                  "1",
 		"partner":                   partner.ToString(),
@@ -72,7 +75,7 @@ func (c *TradeOfferClient) SendOffer(partner SteamId, offer_url_token string, me
 }
 
 func (c *TradeOfferClient) GetOffers() (*TradeOffers, error) {
-	resp, err := c.client.Get(fmt.Sprintf(apiUrl, "GetTradeOffers", 1) + "?" + netutil.ToUrlValues(map[string]string{
+	resp, err := c.httpClient.Get(fmt.Sprintf(apiUrl, "GetTradeOffers", 1) + "?" + netutil.ToUrlValues(map[string]string{
 		"key":                 string(c.b.ApiKey),
 		"get_sent_offers":     "1",
 		"get_received_offers": "1",
@@ -101,7 +104,7 @@ type actionResult struct {
 }
 
 func (c *TradeOfferClient) action(method string, version uint, id TradeOfferId) error {
-	resp, err := c.client.Do(netutil.NewPostForm(fmt.Sprintf(apiUrl, method, version), netutil.ToUrlValues(map[string]string{
+	resp, err := c.httpClient.Do(netutil.NewPostForm(fmt.Sprintf(apiUrl, method, version), netutil.ToUrlValues(map[string]string{
 		"key":          string(c.b.ApiKey),
 		"tradeofferid": strconv.FormatUint(uint64(id), 10),
 	})))
@@ -124,7 +127,7 @@ func (c *TradeOfferClient) Cancel(id TradeOfferId) error {
 }
 
 func (c *TradeOfferClient) GetOwnInventory(contextId uint64, appId uint32) (*inventory.Inventory, error) {
-	return inventory.GetOwnInventory(c.client, contextId, appId)
+	return inventory.GetOwnInventory(c.httpClient, contextId, appId)
 }
 
 func (c *TradeOfferClient) GetTheirInventory(other SteamId, contextId uint64, appId uint32) (*inventory.Inventory, error) {
@@ -153,5 +156,5 @@ func (c *TradeOfferClient) getPartialTheirInventory(other SteamId, contextId uin
 	}
 	req.Header.Add("Referer", baseUrl+"?partner="+fmt.Sprintf("%d", other))
 
-	return inventory.DoInventoryRequest(c.client, req)
+	return inventory.DoInventoryRequest(c.httpClient, req)
 }

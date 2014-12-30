@@ -92,6 +92,9 @@ func (c *Client) Connected() bool {
 // should choose one yourself and connect with ConnectTo since the included list may not always be up to date.
 func (c *Client) Connect() error {
 	server := GetRandomCM()
+	if server != nil {
+		c.b.Debugf("choice cm server:%s\n", server.String())
+	}
 	return c.ConnectTo(server)
 }
 
@@ -100,7 +103,7 @@ func (c *Client) Connect() error {
 func (c *Client) ConnectTo(addr *netutil.PortAddr) error {
 	c.Disconnect()
 
-	conn, err := dialTCP(addr.ToTCPAddr())
+	conn, err := dialTCP(addr.String())
 	if err != nil {
 		return err
 	}

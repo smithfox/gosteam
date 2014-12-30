@@ -3,6 +3,7 @@ package bot
 import (
 	"encoding/json"
 	"fmt"
+	. "github.com/smithfox/gosteam/apath"
 	. "github.com/smithfox/gosteam/internal"
 	"github.com/smithfox/gosteam/log"
 	. "github.com/smithfox/gosteam/steamid"
@@ -37,17 +38,11 @@ type BotsConf struct {
 	Bots []*BotConf
 }
 
-var gAppPath string
-
-func SetAppPath(app_path string) {
-	gAppPath = app_path
-}
-
 var gBotsByDisplayName map[string]*BotConf = make(map[string]*BotConf)
 var gBotsByUsername map[string]*BotConf = make(map[string]*BotConf)
 
 func LoadBotConfs() error {
-	json_conf_file_path := filepath.Join(gAppPath, "bots", "bots_conf.json")
+	json_conf_file_path := filepath.Join(AppPath(), "bots", "bots_conf.json")
 	var botsconf BotsConf
 	bb, err := ioutil.ReadFile(json_conf_file_path)
 	if err != nil {
@@ -131,13 +126,13 @@ type BotRunTime struct {
 
 func NewBotRunTime(botconf *BotConf, authcode string) *BotRunTime {
 	bot_lower_name := strings.ToLower(botconf.DisplayName)
-	log_dir := filepath.Join(gAppPath, "bots", "logs")
+	log_dir := filepath.Join(AppPath(), "bots", "logs")
 	log1 := log.NewLog(log_dir, bot_lower_name)
 	log1.ConsoleOutput(true)
 
 	eventbus := newEventBus()
 
-	sentry_filepath := filepath.Join(gAppPath, "bots", "sentry", bot_lower_name+".sentry")
+	sentry_filepath := filepath.Join(AppPath(), "bots", "sentry", bot_lower_name+".sentry")
 	sentry, err := ioutil.ReadFile(sentry_filepath)
 	if err != nil {
 		log1.Warnf("Fail to read sentry file: %s\n", sentry_filepath)
@@ -154,7 +149,7 @@ func NewBotRunTime(botconf *BotConf, authcode string) *BotRunTime {
 
 func (b *BotRunTime) WriteSentry(sentry SentryHash) {
 	bot_lower_name := strings.ToLower(b.BotConf.DisplayName)
-	sentry_filepath := filepath.Join(gAppPath, "bots", "sentry", bot_lower_name+".sentry")
+	sentry_filepath := filepath.Join(AppPath(), "bots", "sentry", bot_lower_name+".sentry")
 	err := ioutil.WriteFile(sentry_filepath, sentry, 0666)
 
 	if err != nil {
