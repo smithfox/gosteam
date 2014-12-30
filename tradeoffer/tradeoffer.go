@@ -57,11 +57,11 @@ type TradeOffers struct {
 }
 
 type TradeOfferSendAsset struct {
-	AppId      int   `json:"appid"`
-	ContextId  int   `json:"contextid"`
-	AssetId    int64 `json:"assetid"`
-	Amount     int   `json:"amount"`
-	CurrencyId int   `json:"currencyid"`
+	AppId      int    `json:"appid"`
+	ContextId  string `json:"contextid"`
+	AssetId    int64  `json:"assetid"`
+	Amount     int    `json:"amount"`
+	CurrencyId int    `json:"currencyid"`
 }
 
 type TradeOfferSendAssetReady struct {

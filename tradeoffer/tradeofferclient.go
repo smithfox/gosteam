@@ -43,7 +43,7 @@ func (c *TradeOfferClient) SendOffer(partner SteamId, offer_url_token string, me
 	uuuu, _ := url.Parse("https://steamcommunity.com/")
 	send_url := "https://steamcommunity.com/tradeoffer/new/send"
 	refer_url := fmt.Sprintf("https://steamcommunity.com/tradeoffer/new/?partner=%d&token=%s", partner.GetAccountId(), offer_url_token)
-	c.b.Debugf("refer_url=%s,cookie=%v\n", refer_url, c.httpClient.Jar.Cookies(uuuu))
+	c.b.Debugf("refer_url=%s,cookie=%v,sessionid=%v,json_tradeoffer=%v\n", refer_url, c.httpClient.Jar.Cookies(uuuu), c.b.WebSessionId(), string(json_tradeoffer))
 	//fmt.Printf("refer_url=%s,cookie=%v\n", refer_url, c.httpClient.Jar.Cookies(uuuu))
 	resp, err := c.httpClient.Do(netutil.NewPostForm1(send_url, refer_url, netutil.ToUrlValues(map[string]string{
 		"sessionid":                 c.b.WebSessionId(),
@@ -51,7 +51,7 @@ func (c *TradeOfferClient) SendOffer(partner SteamId, offer_url_token string, me
 		"partner":                   partner.ToString(),
 		"tradeoffermessage":         message,
 		"json_tradeoffer":           string(json_tradeoffer),
-		"trade_offer_create_params": "{}",
+		"trade_offer_create_params": "{\"trade_offer_access_token\":\"" + offer_url_token + "\"}",
 	})))
 	if err != nil {
 		return 0, err
