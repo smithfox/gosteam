@@ -28,7 +28,7 @@ func NewTradeOfferClient(b *bot.BotRunTime) *TradeOfferClient {
 		b:          b,
 	}
 
-	community.SetCookies(c.httpClient, b.WebSessionId(), b.WebSteamLogin(), b.WebSteamLoginSecure())
+	//community.SetCookies(c.httpClient, b.WebSessionId(), b.WebSteamLogin(), b.WebSteamLoginSecure())
 
 	community.SetCookiesHttps(c.httpClient, b.WebSessionId(), b.WebSteamLogin(), b.WebSteamLoginSecure())
 	return c
@@ -45,14 +45,15 @@ func (c *TradeOfferClient) SendOffer(partner SteamId, offer_url_token string, me
 	refer_url := fmt.Sprintf("https://steamcommunity.com/tradeoffer/new/?partner=%d&token=%s", partner.GetAccountId(), offer_url_token)
 	c.b.Debugf("refer_url=%s,cookie=%v,sessionid=%v,json_tradeoffer=%v\n", refer_url, c.httpClient.Jar.Cookies(uuuu), c.b.WebSessionId(), string(json_tradeoffer))
 	//fmt.Printf("refer_url=%s,cookie=%v\n", refer_url, c.httpClient.Jar.Cookies(uuuu))
-	resp, err := c.httpClient.Do(netutil.NewPostForm1(send_url, refer_url, netutil.ToUrlValues(map[string]string{
-		"sessionid":                 c.b.WebSessionId(),
-		"serverid":                  "1",
-		"partner":                   partner.ToString(),
-		"tradeoffermessage":         message,
-		"json_tradeoffer":           string(json_tradeoffer),
-		"trade_offer_create_params": "{\"trade_offer_access_token\":\"" + offer_url_token + "\"}",
-	})))
+	vv := url.Values{}
+	vv.Add("sessionid", c.b.WebSessionId())
+	vv.Add("serverid", "1")
+	vv.Add("partner", partner.ToString())
+	vv.Add("tradeoffermessage", message)
+	vv.Add("json_tradeoffer", string(json_tradeoffer))
+	vv.Add("trade_offer_create_params", "{\"trade_offer_access_token\":\""+offer_url_token+"\"}")
+
+	resp, err := c.httpClient.Do(netutil.NewPostForm1(send_url, refer_url, vv))
 	if err != nil {
 		return 0, err
 	}
