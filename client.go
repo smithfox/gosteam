@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"encoding/binary"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"github.com/smithfox/gosteam/bot"
 	"github.com/smithfox/gosteam/cryptoutil"
 	. "github.com/smithfox/gosteam/internal"
@@ -336,6 +337,13 @@ func readIp(ip uint32) net.IP {
 	return r
 }
 
+// Sets the local user's persona state and broadcasts it over the network
+func (c *Client) SetPersonaState(state EPersonaState) {
+	c.Write(NewClientMsgProtobuf(EMsg_ClientChangeStatus, &CMsgClientChangeStatus{
+		PersonaState: proto.Uint32(uint32(state)),
+	}))
+}
+
 func (c *Client) Run(f func(ee interface{})) {
 	c.Connect()
 
@@ -351,7 +359,7 @@ func (c *Client) Run(f func(ee interface{})) {
 			c.b.WriteSentry(bot.SentryHash(e.Hash))
 		case *LoggedOnEvent:
 			c.b.Debugf("event: LoggedOnEvent\n")
-			// client.Social.SetPersonaState(steamlang.EPersonaState_Online)
+			c.SetPersonaState(EPersonaState_Online)
 		case *ClientCMListEvent:
 			c.b.Debugf("event: ClientCMListEvent, len=%d\n", len(e.Addresses))
 			UpdateCMServers(e.Addresses)

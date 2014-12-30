@@ -9,6 +9,7 @@ const (
 	EMsg_Invalid                                          EMsg = 0
 	EMsg_Multi                                            EMsg = 1
 	EMsg_ClientHeartBeat                                  EMsg = 703
+	EMsg_ClientChangeStatus                               EMsg = 716
 	EMsg_ClientLogOnResponse                              EMsg = 751
 	EMsg_ClientLoggedOff                                  EMsg = 757
 	EMsg_ClientAccountInfo                                EMsg = 768
