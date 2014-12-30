@@ -69,7 +69,7 @@ type TradeOfferSendAssetReady struct {
 }
 
 type TradeOfferSendObj struct {
-	NewVersion string                   `json:"newversion"`
+	NewVersion bool                     `json:"newversion"`
 	Version    int                      `json:"version"`
 	Me         TradeOfferSendAssetReady `json:"me"`
 	Them       TradeOfferSendAssetReady `json:"them"`
