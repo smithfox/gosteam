@@ -65,9 +65,9 @@ type TradeOfferSendAsset struct {
 }
 
 type TradeOfferSendAssetReady struct {
-	Assets []TradeOfferSendAsset `json:"assets"`
-	//	Currency []TradeOfferSendAsset `json:"currency"`
-	Ready bool `json:"ready"`
+	Assets   []TradeOfferSendAsset `json:"assets"`
+	Currency []string              `json:"currency"` //应该是TradeOfferSendAsset, 故意string
+	Ready    bool                  `json:"ready"`
 }
 
 type TradeOfferSendObj struct {
