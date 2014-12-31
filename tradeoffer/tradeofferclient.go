@@ -28,10 +28,24 @@ func NewTradeOfferClient(b *bot.BotRunTime) *TradeOfferClient {
 		b:          b,
 	}
 
-	community.SetCookies(c.httpClient, b.WebSessionId(), b.WebSteamLogin(), b.WebSteamLoginSecure())
-
-	// community.SetCookiesHttps(c.httpClient, b.WebSessionId(), b.WebSteamLogin(), b.WebSteamLoginSecure())
 	return c
+}
+
+func (c *TradeOfferClient) InitWebAuth() {
+	/*
+		community.SetCookies(
+			c.httpClient,
+			c.b.WebSessionId(),
+			c.b.WebSteamLogin(),
+			c.b.WebSteamLoginSecure(),
+		)
+	*/
+	community.SetCookiesHttps(
+		c.httpClient,
+		c.b.WebSessionId(),
+		c.b.WebSteamLogin(),
+		c.b.WebSteamLoginSecure(),
+	)
 }
 
 func (c *TradeOfferClient) SendOffer(partner SteamId, offer_url_token string, message string, obj *TradeOfferSendObj) (TradeOfferId, error) {

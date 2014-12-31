@@ -4,7 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/binary"
-	// "fmt"
+	"fmt"
 	"github.com/smithfox/gosteam/cryptoutil"
 	. "github.com/smithfox/gosteam/internal"
 	"io"
