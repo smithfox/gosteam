@@ -65,14 +65,14 @@ type TradeOfferSendAsset struct {
 }
 
 type TradeOfferSendAssetReady struct {
-	Assets   []TradeOfferSendAsset `json:"assets"`
-	Currency []string              `json:"currency"` //应该是TradeOfferSendAsset, 故意string
-	Ready    bool                  `json:"ready"`
+	Assets   []*TradeOfferSendAsset `json:"assets"`
+	Currency []string               `json:"currency"` //应该是TradeOfferSendAsset, 故意string
+	Ready    bool                   `json:"ready"`
 }
 
 type TradeOfferSendObj struct {
-	NewVersion bool                     `json:"newversion"`
-	Version    int                      `json:"version"`
-	Me         TradeOfferSendAssetReady `json:"me"`
-	Them       TradeOfferSendAssetReady `json:"them"`
+	NewVersion bool                      `json:"newversion"`
+	Version    int                       `json:"version"`
+	Me         *TradeOfferSendAssetReady `json:"me"`
+	Them       *TradeOfferSendAssetReady `json:"them"`
 }
