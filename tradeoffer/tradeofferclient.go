@@ -28,9 +28,9 @@ func NewTradeOfferClient(b *bot.BotRunTime) *TradeOfferClient {
 		b:          b,
 	}
 
-	//community.SetCookies(c.httpClient, b.WebSessionId(), b.WebSteamLogin(), b.WebSteamLoginSecure())
+	community.SetCookies(c.httpClient, b.WebSessionId(), b.WebSteamLogin(), b.WebSteamLoginSecure())
 
-	community.SetCookiesHttps(c.httpClient, b.WebSessionId(), b.WebSteamLogin(), b.WebSteamLoginSecure())
+	// community.SetCookiesHttps(c.httpClient, b.WebSessionId(), b.WebSteamLogin(), b.WebSteamLoginSecure())
 	return c
 }
 

@@ -4,7 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/binary"
-	"fmt"
+	// "fmt"
 	"github.com/smithfox/gosteam/cryptoutil"
 	. "github.com/smithfox/gosteam/internal"
 	"io"
@@ -32,14 +32,14 @@ type tcpConnection struct {
 }
 
 func dialTCPTimeout(addr string, conn_timeout int, read_timeout int, write_timeout int) (*tcpConnection, error) {
-	fmt.Printf("before dialtimeout\n")
+	//fmt.Printf("before dialtimeout\n")
 
 	conn, err := net.DialTimeout("tcp", addr, time.Duration(conn_timeout)*time.Second)
 	//conn, err := net.DialTCP("tcp", nil, addr)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("after dialtimeout\n")
+	//fmt.Printf("after dialtimeout\n")
 	//conn := *net.TCPConn(conn1)
 
 	return &tcpConnection{
@@ -59,7 +59,7 @@ func (c *tcpConnection) Read() (*Packet, error) {
 	// All packets begin with a packet length
 	var packetLen uint32
 	err := binary.Read(c.conn, binary.LittleEndian, &packetLen)
-	fmt.Printf("tcpConnection.Read1\n")
+	//fmt.Printf("tcpConnection.Read1\n")
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (c *tcpConnection) Read() (*Packet, error) {
 	// A magic value follows for validation
 	var packetMagic uint32
 	err = binary.Read(c.conn, binary.LittleEndian, &packetMagic)
-	fmt.Printf("tcpConnection.Read2\n")
+	//fmt.Printf("tcpConnection.Read2\n")
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (c *tcpConnection) Read() (*Packet, error) {
 
 	buf := make([]byte, packetLen, packetLen)
 	_, err = io.ReadFull(c.conn, buf)
-	fmt.Printf("tcpConnection.Read3\n")
+	//fmt.Printf("tcpConnection.Read3\n")
 	if err == io.ErrUnexpectedEOF {
 		return nil, io.EOF
 	}
@@ -106,18 +106,18 @@ func (c *tcpConnection) Write(message []byte) error {
 	c.cipherMutex.RUnlock()
 
 	err := binary.Write(c.conn, binary.LittleEndian, uint32(len(message)))
-	fmt.Printf("tcpConnection.Write1\n")
+	//fmt.Printf("tcpConnection.Write1\n")
 	if err != nil {
 		return err
 	}
 	err = binary.Write(c.conn, binary.LittleEndian, tcpConnectionMagic)
-	fmt.Printf("tcpConnection.Write2\n")
+	//fmt.Printf("tcpConnection.Write2\n")
 	if err != nil {
 		return err
 	}
 
 	_, err = c.conn.Write(message)
-	fmt.Printf("tcpConnection.Write3\n")
+	//fmt.Printf("tcpConnection.Write3\n")
 	return err
 }
 
